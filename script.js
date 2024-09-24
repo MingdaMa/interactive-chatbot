@@ -1,17 +1,15 @@
-inputField = document.getElementById('user-input');
-sendBtn = document.getElementById('send-button');
-messagesContainer = document.getElementById('messages');
+const inputField = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-button');
+const messagesContainer = document.getElementById('messages');
 
 function sendMessage() {
-    let message  = inputField.value;
-    message = message.trim();
+    let message  = inputField.value.trim();
     if (message === '') {
-        messagesContainer.innerHTML += '<div class="warning-message"> Please enter a message </div>';
+        alert('Please enter a message');
     } else {
         messagesContainer.innerHTML += '<div class="message"> User: ' + message + '</div>';
     }
     inputField.value = '';
-
 }
 
 sendBtn.addEventListener('click', sendMessage);
