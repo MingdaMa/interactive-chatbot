@@ -34,3 +34,29 @@ inputField.addEventListener('keypress', async (e) => {
       sendMessage();
     }
 });
+
+function logEvent(type, element) {
+  fetch('/log-event', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date() })
+  });
+}
+
+
+sendBtn.addEventListener('click', () => {
+  logEvent('click', 'Send Button');});
+
+inputField.addEventListener('mouseover', () => {
+  logEvent('hover', 'User Input');
+});
+
+inputField.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    logEvent('enter', 'User Input');
+  }
+});
+
+inputField.addEventListener('focus', () => {
+  logEvent('focus', 'User Input');
+});
