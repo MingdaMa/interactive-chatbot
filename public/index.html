@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <form id="participant-form" action="/chat.html">
+        <label for="participantID">Enter your Participant ID:</label>
+        <input type="text" id="participantID" name="participantID" required>
+        <button type="submit">Start Chat</button>
+    </form>
+
+    <script>
+        document.getElementById('participant-form').addEventListener('submit', function(event) {
+            const participantID = document.getElementById('participantID').value;
+            localStorage.setItem('participantID', participantID);
+        });
+    </script>
+</body>
+</html>
