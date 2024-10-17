@@ -28,27 +28,32 @@ app.get('/', (req, res) => {
 });
 
 app.post('/chat', async (req, res) => { 
-  const input = req.body;
-  const message = input.userMsg;
+  const { history = [], input: userInput } = req.body; // Default history
 
-  if (!message) {
-    return res.status(400).send("Invalid Input");
-  }
+  const messages = history.length === 0  
+    ? [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: userInput }] 
+    : [{ role: 'system', content: 'You are a helpful assistant.' }, ...history, { role: 'user', content: userInput }];
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
-    messages: [{ role: 'user', content: message}],
-    max_tokens: 200,
-    });
-  const botResponse = response.choices[0].message.content.trim();
-  
-  const interaction = new Interaction({
-    userInput: message,
-    botResponse: botResponse,
-    }); 
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: messages, // pass messages instead of user input only
+        max_tokens: 500,
+      });
 
-  await interaction.save();
-  res.json({ message: botResponse });
+      const botResponse = response.choices[0].message.content.trim();
+
+      const interaction = new Interaction({
+        userInput: userInput,
+        botResponse: botResponse,
+      }); 
+
+      await interaction.save();
+      res.json({ message: botResponse });
+
+    } catch (e) {
+      console.error('Error:', e.message);
+    }
 })
 
 app.post('/log-event', async (req, res) => {

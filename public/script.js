@@ -3,22 +3,31 @@ const sendBtn = document.getElementById('send-button');
 const messagesContainer = document.getElementById('messages');
 
 const sendMessage = async () => {
-  let message  = inputField.value.trim();
-  if (message === '') {
-      alert('Please enter a message');
+  const userInput  = inputField.value.trim();
+
+  if (userInput === '') {
+    alert('Please enter a message');
   } else {
-      messagesContainer.innerHTML += '<div class="message"> User: ' + message + '</div>';
+      messagesContainer.innerHTML += '<div class="message"> User: ' + userInput + '</div>';
   }
+
+  let conversationHistory = [];
+
+  const payload = conversationHistory.length === 0
+    ? { input: userInput } // First submission, send only input
+    : { history: conversationHistory, input: userInput };
 
   const response = await fetch('/chat', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userMsg: message })
+    body: JSON.stringify(payload) // pass payload instead of only user input
   });
 
   const data = await response.json();
 
-  console.log(data);
+  // add user input and bot response to the conversation history
+  conversationHistory.push({ role: 'user', content: userInput });
+  conversationHistory.push({ role: 'assistant', content: data.botResponse});
 
   messagesContainer.innerHTML += '<div class="message"> Bot: ' + data.message + '</div>';
 
