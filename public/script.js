@@ -1,6 +1,7 @@
 const inputField = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-button');
 const messagesContainer = document.getElementById('messages');
+let conversationHistory = [];
 
 const sendMessage = async () => {
   const userInput  = inputField.value.trim();
@@ -11,11 +12,11 @@ const sendMessage = async () => {
       messagesContainer.innerHTML += '<div class="message"> User: ' + userInput + '</div>';
   }
 
-  let conversationHistory = [];
+  
 
-  const payload = conversationHistory.length === 0
-    ? { input: userInput } // First submission, send only input
-    : { history: conversationHistory, input: userInput };
+  const payload = conversationHistory.length === 0 
+  ? { input: userInput, participantID } 
+  : { history: conversationHistory, input: userInput, participantID };
 
   const response = await fetch('/chat', {
     method: 'POST',
@@ -59,7 +60,7 @@ function logEvent(type, element) {
   fetch('/log-event', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date() })
+  body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date(), participantID: participantID })
   });
 }
 
@@ -80,3 +81,36 @@ inputField.addEventListener('keypress', (e) => {
 inputField.addEventListener('focus', () => {
   logEvent('focus', 'User Input');
 });
+
+const participantID = localStorage.getItem('participantID');
+if (!participantID) {
+  alert('Please enter a participant ID.');
+  window.location.href = '/';
+}
+
+// Function to fetch and load existing conversation history
+async function loadConversationHistory() {
+  const response = await fetch('/history', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ participantID }) // Send participantID to the server
+  });
+  const data = await response.json();
+
+
+  if (data.interactions && data.interactions.length > 0) {
+    data.interactions.forEach(interaction => {
+      const userMessageDiv = document.createElement('div');
+      userMessageDiv.textContent = `You: ${interaction.userInput}`;
+      document.getElementById('messages').appendChild(userMessageDiv);
+      const botMessageDiv = document.createElement('div');
+      botMessageDiv.textContent = `Bot: ${interaction.botResponse}`;
+      document.getElementById('messages').appendChild(botMessageDiv);
+    // Add to conversation history
+      conversationHistory.push({ role: 'user', content: interaction.userInput });
+      conversationHistory.push({ role: 'assistant', content: interaction.botResponse });
+    });
+  }
+}
+  // Load history when agent loads
+  window.onload = loadConversationHistory;
