@@ -33,8 +33,13 @@ app.get('/chat.html', (req, res) => {
 });
 
 app.post('/chat', async (req, res) => { 
-  const { history = [], input: userInput } = req.body; // Default history
+  const { history = [], input: userInput, participantID } = req.body; // Default history
 
+  // Check for participantID
+  if (!participantID) {
+    return res.status(400).send('Participant ID is required');
+  }
+ 
   const messages = history.length === 0  
     ? [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: userInput }] 
     : [{ role: 'system', content: 'You are a helpful assistant.' }, ...history, { role: 'user', content: userInput }];
@@ -65,7 +70,7 @@ app.post('/chat', async (req, res) => {
       const interaction = new Interaction({
         userInput,
         botResponse,
-        searchResults
+        participantID
       }); 
 
       await interaction.save();
@@ -77,9 +82,15 @@ app.post('/chat', async (req, res) => {
 })
 
 app.post('/log-event', async (req, res) => {
-  const { eventType, elementName, timestamp } = req.body;
+  const { eventType, elementName, timestamp, participantID } = req.body;
+
+  // Check for participantID
+  if (!participantID) {
+    return res.status(400).send('Participant ID is required');
+  }
+
   try {
-      const event = new EventLog({ eventType, elementName, timestamp}); 
+      const event = new EventLog({ eventType, elementName, participantID, timestamp }); 
       await event.save();
       res.status(200).send('Event logged successfully');
     } catch (error) {
@@ -88,6 +99,23 @@ app.post('/log-event', async (req, res) => {
     }
 });
 
+// Define a POST route for retrieving chat history by participantID
+// POST route to fetch conversation history by participantID
+app.post('/history', async (req, res) => {
+  const { participantID } = req.body; // Get participant ID
+  if (!participantID) {
+    return res.status(400).send('Participant ID is required');
+  }
+  try {
+    // Fetch all interactions from the database for the given participantID
+    const interactions = await Interaction.find({ participantID }).sort({ timestamp: 1 });
+    // Send the conversation history back to the client
+    res.json({ interactions });
+  } catch (error) {
+    console.error('Error fetching conversation history:', error.message);
+    res.status(500).send('Server Error');
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
