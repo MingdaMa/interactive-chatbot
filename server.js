@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const axios = require('axios');
 
 const Interaction = require('./models/Interaction');
 const EventLog = require('./models/EventLog');
@@ -38,18 +39,33 @@ app.post('/chat', async (req, res) => {
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: messages, // pass messages instead of user input only
-        max_tokens: 500,
+        max_tokens: 1500,
       });
+
+      const bingResponse = await axios.get('https://api.bing.microsoft.com/v7.0/search', {
+        params: { q: userInput }, // Use the user's input as the search query
+        headers: {
+        'Ocp-Apim-Subscription-Key': process.env.BING_API_KEY
+        }
+      });
+
+      const searchResults = bingResponse.data.webPages.value.slice(0, 3).map(result => ({
+        title: result.name,
+        url: result.url,
+        snippet: result.snippet
+      }));
+      console.log()
 
       const botResponse = response.choices[0].message.content.trim();
 
       const interaction = new Interaction({
-        userInput: userInput,
-        botResponse: botResponse,
+        userInput,
+        botResponse,
+        searchResults
       }); 
 
       await interaction.save();
-      res.json({ message: botResponse });
+      res.json({ message: botResponse, searchResults: searchResults });
 
     } catch (e) {
       console.error('Error:', e.message);

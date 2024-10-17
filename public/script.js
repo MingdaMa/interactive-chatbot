@@ -29,6 +29,17 @@ const sendMessage = async () => {
   conversationHistory.push({ role: 'user', content: userInput });
   conversationHistory.push({ role: 'assistant', content: data.botResponse});
 
+  if (data.searchResults && data.searchResults.length > 0) {
+    const searchResultsDiv = document.createElement('div');
+    data.searchResults.forEach(result => {
+      const resultDiv = document.createElement('div');
+      resultDiv.innerHTML = `<a href="${result.url}"
+      target="_blank">${result.title}</a><p>${result.snippet}</p>`;
+      searchResultsDiv.appendChild(resultDiv);
+    });
+    document.getElementById('messages').appendChild(searchResultsDiv); 
+  }
+
   messagesContainer.innerHTML += '<div class="message"> Bot: ' + data.message + '</div>';
 
   inputField.value = '';
