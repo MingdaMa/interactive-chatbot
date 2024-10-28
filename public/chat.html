@@ -3,21 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Chat Interface</title>
-
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>AI Chatbot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
-<body>
-    <div id="chat-container"">
-        <h1>AI Chatbot</h1>
-        <div id="messages"></div>
-        <input type="text" id="user-input" placeholder="Type your message...">
-        <button id="send-button">Send</button>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div id="chat-container" class="w-full max-w-2xl bg-white shadow-lg rounded-lg flex flex-col h-3/4">
+        <!-- Header -->
+        <div class="bg-blue-600 text-white p-4 rounded-t-lg">
+            <h1 class="text-2xl font-semibold">AI Chatbot</h1>
+        </div>
+        <!-- Messages Container -->
+        <div id="messages" class="flex-1 p-4 overflow-y-auto space-y-4">
+            <!-- Messages will be appended here -->
+        </div>
+        <!-- Input Area -->
+        <div class="p-4 bg-gray-50 flex space-x-2">
+            <input 
+                type="text" 
+                id="user-input" 
+                placeholder="Type your message..." 
+                class="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+            <button 
+                id="send-button" 
+                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+                Send
+            </button>
+        </div>
     </div>
+    <!-- Your script.js -->
     <script src="script.js"></script>
 </body>
 </html>
