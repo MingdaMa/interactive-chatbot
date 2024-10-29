@@ -32,6 +32,8 @@ app.get('/chat.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'chat.html'));
 });
 
+app.use('/dist', express.static(path.join(__dirname, 'dist')));
+
 app.post('/chat', async (req, res) => { 
   const { history = [], input: userInput, participantID } = req.body; // Default history
 

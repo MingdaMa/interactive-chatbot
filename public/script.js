@@ -12,11 +12,9 @@ const sendMessage = async () => {
       messagesContainer.innerHTML += '<div class="message"> User: ' + userInput + '</div>';
   }
 
-  
-
   const payload = conversationHistory.length === 0 
-  ? { input: userInput, participantID } 
-  : { history: conversationHistory, input: userInput, participantID };
+    ? { input: userInput, participantID } 
+    : { history: conversationHistory, input: userInput, participantID };
 
   const response = await fetch('/chat', {
     method: 'POST',

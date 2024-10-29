@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npx nodemon server.js",
+    "build:css": "tailwindcss -i ./public/style.css -o ./dist/style.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -19,6 +20,9 @@
     "openai": "^4.67.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.7"
+    "autoprefixer": "^10.4.20",
+    "nodemon": "^3.1.7",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14"
   }
 }
