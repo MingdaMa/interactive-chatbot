@@ -6,11 +6,11 @@ let conversationHistory = [];
 const createMessageElement = (text, sender) => {
     const messageDiv = document.createElement('div');
     if (sender === 'user') {
-        messageDiv.className = 'max-w-[70%] self-end bg-blue-200 p-3 rounded-lg mb-2';
-        messageDiv.textContent = `You: ${text}`;
+        messageDiv.className = 'max-w-[70%] self-start bg-blue-200 p-3 rounded-lg mb-2';
+        messageDiv.textContent = `${text}`;
     } else {
-        messageDiv.className = 'max-w-[70%] self-start bg-gray-200 p-3 rounded-lg mb-2';
-        messageDiv.textContent = `Bot: ${text}`;
+        messageDiv.className = 'max-w-[70%] self-end bg-gray-200 p-3 rounded-lg mb-2';
+        messageDiv.textContent = `${text}`;
     }
     return messageDiv;
 }
@@ -45,7 +45,7 @@ const sendMessage = async () => {
 
     // add user input and bot response to the conversation history
     conversationHistory.push({ role: 'user', content: userInput });
-    conversationHistory.push({ role: 'assistant', content: data.botResponse});
+    conversationHistory.push({ role: 'assistant', content: data.message});
 
     const botMessageElement = createMessageElement(data.message, 'bot');
     messagesContainer.appendChild(botMessageElement);
