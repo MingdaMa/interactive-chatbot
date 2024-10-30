@@ -41,6 +41,8 @@ app.post('/chat', async (req, res) => {
   if (!participantID) {
     return res.status(400).send('Participant ID is required');
   }
+
+  console.log('userInput:', userInput);
  
   const messages = history.length === 0  
     ? [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: userInput }] 
@@ -48,24 +50,12 @@ app.post('/chat', async (req, res) => {
 
     try {
       const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-4",
         messages: messages, // pass messages instead of user input only
         max_tokens: 1500,
       });
 
-      const bingResponse = await axios.get('https://api.bing.microsoft.com/v7.0/search', {
-        params: { q: userInput }, // Use the user's input as the search query
-        headers: {
-        'Ocp-Apim-Subscription-Key': process.env.BING_API_KEY
-        }
-      });
-
-      const searchResults = bingResponse.data.webPages.value.slice(0, 3).map(result => ({
-        title: result.name,
-        url: result.url,
-        snippet: result.snippet
-      }));
-      console.log()
+      console.log('response:', response);
 
       const botResponse = response.choices[0].message.content.trim();
 
@@ -76,7 +66,7 @@ app.post('/chat', async (req, res) => {
       }); 
 
       await interaction.save();
-      res.json({ message: botResponse, searchResults: searchResults });
+      res.json({ message: botResponse});
 
     } catch (e) {
       console.error('Error:', e.message);
