@@ -16,6 +16,21 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
+const systemPrompt = `You are a helpful assistant that helps developers create a ReadMe for their projects. Given information about a project, you should generate a comprehensive markdown ReadMe file. The user will provide details such as programming languages, frameworks, project description, and configuration files like package.json, requirements.txt, Makefile, etc. 
+
+Please generate the ReadMe content in plaintext, and whenever you include a markdown snippet intended for the ReadMe, encapsulate it within <mdsnippet></mdsnippet> tags. 
+
+**Example:**
+Here's how to include a code block:
+
+<mdsnippet>
+\`\`\`javascript
+console.log('Hello, World!');
+\`\`\`
+</mdsnippet>
+
+Ensure that all markdown content is properly enclosed within the specified tags.`;
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error(`MongoDB connection error: ${err}`));
@@ -45,8 +60,8 @@ app.post('/chat', async (req, res) => {
   console.log('userInput:', userInput);
  
   const messages = history.length === 0  
-    ? [{ role: 'system', content: 'You are a helpful assistant.' }, { role: 'user', content: userInput }] 
-    : [{ role: 'system', content: 'You are a helpful assistant.' }, ...history, { role: 'user', content: userInput }];
+    ? [{ role: 'system', content: systemPrompt }, { role: 'user', content: userInput }] 
+    : [{ role: 'system', content: systemPrompt }, ...history, { role: 'user', content: userInput }];
 
     try {
       const response = await openai.chat.completions.create({
