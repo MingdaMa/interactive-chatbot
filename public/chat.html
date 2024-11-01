@@ -18,14 +18,76 @@
                 placeholder="Type your message..."
                 class="flex-1 border border-gray-300 rounded px-3 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-
             <button
                 id="send-button"
-                class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition-colors"
+                class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition-colors mr-2"
             >
                 Send
             </button>
+            <button
+              id="quick-start-button"
+              class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100"
+            >
+              Quick Start
+            </button>
         </div>
+    </div>
+    <div class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center" style="display: none" id="quick-start">
+      <div class="bg-white w-[600px] p-6 rounded-lg shadow-lg relative">
+        <!-- Close Button -->
+        <button id="close-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+    
+        <!-- Form Fields -->
+        <form class="space-y-4" method="POST" action="">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Project Name</label>
+            <input id="projectName" type="text" placeholder="Enter project name..." class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+          </div>
+    
+          <!-- Multiselect Field -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Programming Languages</label>
+    
+            <!-- Multiselect Container -->
+            <div class="relative border border-gray-300 rounded-lg p-2 cursor-pointer flex items-center" id="multiSelect" onclick="toggleDropdown()">
+              <div class="flex flex-wrap gap-1" id="selectedTags">
+                <!-- Selected tags will appear here -->
+              </div>
+              <input
+                type="text"
+                placeholder="Select programming languages..."
+                class="w-full border-none focus:outline-none placeholder-gray-500"
+                readonly
+              />
+              <svg id="caretIcon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2 transition-transform text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+    
+            <!-- Dropdown Menu -->
+            <div class="absolute left-6 right-6 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto hidden z-10" id="optionsDropdown">
+              <ul id="optionsList" class="py-2">
+                <!-- Options will be dynamically inserted here -->
+              </ul>
+            </div>
+          </div>
+    
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Configuration file</label>
+            <input id="fileName" type="text" placeholder="Enter file name..." class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"/>
+            <textarea id="fileContent" placeholder="Enter configuration file..." rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+          </div>
+    
+          <div class="flex justify-end space-x-2 mt-6">
+            <button id="submit-btn" type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700">Submit</button>
+            <button id="cancel-btn" type="button" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100">Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
     <script src="script.js"></script>
 </body>

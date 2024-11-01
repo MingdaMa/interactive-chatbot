@@ -1,5 +1,11 @@
 const inputField = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-button');
+const quickStartBtn = document.getElementById('quick-start-button');
+const quickStartForm = document.getElementById('quick-start');
+const multiSelect = document.getElementById('multiselect');
+const closeBtn = document.getElementById('close-btn');
+const cancelBtn = document.getElementById('cancel-btn');
+const submitBtn = document.getElementById('submit-btn');
 const messagesContainer = document.getElementById('messages');
 let conversationHistory = [];
 
@@ -96,9 +102,13 @@ const sendMessage = async () => {
     }
 }
 
+quickStartBtn.addEventListener('click', () => {
+  quickStartForm.removeAttribute('style');
+})
 
 sendBtn.addEventListener('click', async () => {
     sendMessage();
+    logEvent('click', 'Send Button');
 });
 
 inputField.addEventListener('keypress', async (e) => {
@@ -115,9 +125,9 @@ function logEvent(type, element) {
     });
 }
 
-
-sendBtn.addEventListener('click', () => {
-    logEvent('click', 'Send Button');});
+function closeQuickStartForm() {
+    quickStartForm.attributeStyleMap.set('display', 'none');
+}
 
 inputField.addEventListener('mouseover', () => {
     logEvent('hover', 'User Input');
@@ -131,6 +141,14 @@ inputField.addEventListener('keypress', (e) => {
 
 inputField.addEventListener('focus', () => {
     logEvent('focus', 'User Input');
+});
+
+closeBtn.addEventListener('click', () => {
+  closeQuickStartForm();
+});
+
+cancelBtn.addEventListener('click', () => {
+  closeQuickStartForm();
 });
 
 const participantID = localStorage.getItem('participantID');
@@ -166,5 +184,82 @@ async function loadConversationHistory() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 }
+
+const selectedTags = document.getElementById("selectedTags");
+const optionsDropdown = document.getElementById("optionsDropdown");
+const caretIcon = document.getElementById("caretIcon");
+
+const options = ["JavaScript", "HTML/CSS", "Python", "TypeScript", "Bash/Shell", "Java", "C#", "C++", "C", "PHP", "Go", "Rust", "Kotlin", "Ruby", "Swift"];
+const selected = new Set();
+
+function toggleDropdown() {
+  optionsDropdown.classList.toggle("hidden");
+  caretIcon.classList.toggle("rotate-180");
+}
+
+function addOption(option) {
+  if (selected.has(option)) return;
+  selected.add(option);
+  const tag = document.createElement("span");
+  tag.className = "bg-gray-200 text-gray-700 px-2 py-1 rounded-full flex items-center space-x-1 mr-1 mb-1";
+  tag.innerHTML = `${option} <button onclick="removeOption('${option}')">×</button>`;
+  selectedTags.appendChild(tag);
+  updatePlaceholder();
+}
+
+function removeOption(option) {
+  selected.delete(option);
+  Array.from(selectedTags.children).forEach(child => {
+    if (child.textContent.includes(option)) child.remove();
+  });
+  updatePlaceholder();
+}
+
+function updatePlaceholder() {
+  const input = document.querySelector("#multiSelect input");
+  input.placeholder = selected.size ? "" : "Select programming languages...";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const ul = document.getElementById("optionsList");
+  options.forEach(option => {
+    const li = document.createElement("li");
+    li.className = "px-4 py-2 hover:bg-gray-100 cursor-pointer";
+    li.innerText = option;
+    li.onclick = () => addOption(option);
+    ul.appendChild(li);
+  });
+});
+
+quickStartForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const projectName = document.getElementById("projectName").value;
+  const programmingLanguages = Array.from(selected);
+  const fileName = document.getElementById("fileName").value;
+  const fileContent = document.getElementById("fileContent").value;
+
+  if (!projectName || programmingLanguages.length === 0 || !fileName || !fileContent) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  const response = await fetch("/project-info", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ projectName, programmingLanguages, configFile: { name: fileName, content: fileContent } }),
+  });
+
+  if (response.ok) {
+    projectName.value = "";
+    selected.clear();
+    fileName.value = "";
+    fileContent.value = "";
+    closeQuickStartForm();
+    alert("Project information saved successfully.");
+  }
+
+  const data = await response.json();
+  console.log(data.message);
+})
 
 window.onload = loadConversationHistory;
