@@ -16,20 +16,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-const systemPrompt = `You are a helpful assistant that helps developers create a ReadMe for their projects. Given information about a project, you should generate a comprehensive markdown ReadMe file. The user will provide details such as programming languages, frameworks, project description, and configuration files like package.json, requirements.txt, Makefile, etc. 
-
-Please generate the ReadMe content in plaintext, and whenever you include a markdown snippet intended for the ReadMe, encapsulate it within <mdsnippet></mdsnippet> tags. 
-
-**Example:**
-Here's how to include a code block:
-
-<mdsnippet>
-\`\`\`javascript
-console.log('Hello, World!');
-\`\`\`
-</mdsnippet>
-
-Ensure that all markdown content is properly enclosed within the specified tags.`;
+const systemPrompt = `You are a helpful assistant that helps developers create a ReadMe for their projects. Given information about a project,  you should be able to generate a markdown ReadMe file for the project. The user will provide you with information such as programming languages, frameworks, project description, or configuration files such as package.json, requirements.txt, Makefile, etc. You should take all of this information and generate markdown content that can be used as a ReadMe file for the project. Whenever you create a markdown snippet intended to be used in the user's readme put it inside of the following tags so that it can be parsed: <mdsnippet></mdsnippet>`;
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
