@@ -169,6 +169,7 @@ async function loadConversationHistory() {
 
 
     if (data.interactions && data.interactions.length > 0) {
+        quickStartBtn.disabled = true;
         data.interactions.forEach(interaction => {
             const userMessageDiv = createMessageElement(interaction.userInput, 'user');
             messagesContainer.appendChild(userMessageDiv);
@@ -250,11 +251,12 @@ quickStartForm.addEventListener("submit", async (e) => {
   });
 
   if (response.ok) {
+    closeQuickStartForm();
     projectName.value = "";
     selected.clear();
     fileName.value = "";
     fileContent.value = "";
-    closeQuickStartForm();
+    quickStartBtn.disabled = true;
     alert("Project information saved successfully.");
   }
 
