@@ -12,20 +12,20 @@ const processBotResponse = (response) => {
     while ((result = mdSnippetRegex.exec(response)) !== null) {
         const plainText = response.substring(lastIndex, result.index);
         if (plainText) {
-            htmlContent += `<span>${DOMPurify.sanitize(plainText)}</span>`;
+            htmlContent += `<span class="m-6">${DOMPurify.sanitize(plainText)}</span>`;
         }
 
         const markdownText = result[1];
         const sanitizedMarkdown = markdownText.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, "");
         const renderedMarkdown = marked.parse(sanitizedMarkdown);
-        htmlContent += `<div class="markdown-snippet prose">${DOMPurify.sanitize(renderedMarkdown)}</div>`;
+        htmlContent += `<br><div class="markdown-snippet border-solid border-4 border-gray-400 prose m-6 p-6">${DOMPurify.sanitize(renderedMarkdown)}</div><br>`;
 
         lastIndex = mdSnippetRegex.lastIndex;
     }
 
-    const remainingText = response.substring(lastIndex);
+    const remainingText = response.substring(lastIndex).trim();
     if (remainingText) {
-        htmlContent += `<span>${DOMPurify.sanitize(remainingText)}</span>`;
+        htmlContent += `<span class="m-6">${DOMPurify.sanitize(remainingText)}</span>`;
     }
 
     return htmlContent;
