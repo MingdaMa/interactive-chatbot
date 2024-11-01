@@ -8,6 +8,7 @@ const axios = require('axios');
 
 const Interaction = require('./models/Interaction');
 const EventLog = require('./models/EventLog');
+const ProjectInfo = require('./models/ProjectInfo');
 
 const PORT = process.env.PORT || 3000;
 
@@ -107,6 +108,29 @@ app.post('/history', async (req, res) => {
     res.json({ interactions });
   } catch (error) {
     console.error('Error fetching conversation history:', error.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+app.post('/project-info', async (req, res) => {
+  const { projectName, programmingLanguages, configFile: { name, content } } = req.body;
+
+  if (!projectName || !programmingLanguages || !name || !content) {
+    return res.status(400).send('Project info is not complete!');
+  }
+
+  try {
+    const projectInfo = new ProjectInfo({
+      projectName,
+      programmingLanguages,
+      configFile: { name, content }
+    });
+
+    await projectInfo.save();
+
+    res.json({ message: 'Project info saved successfully' });
+  } catch (error) {
+    console.error('Error fetching project info:', error.message);
     res.status(500).send('Server Error');
   }
 });
