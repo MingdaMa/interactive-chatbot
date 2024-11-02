@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.divider {
+    width: 5px;
+    background-color: #ccc;
+    cursor: col-resize;
+}
+
+.no-select {
+    user-select: none;
+}
