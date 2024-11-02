@@ -46,7 +46,19 @@ const processBotResponse = (response) => {
         const markdownText = result[1];
         const sanitizedMarkdown = markdownText.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, "");
         const renderedMarkdown = marked.parse(sanitizedMarkdown);
-        htmlContent += `<br><div class="markdown-snippet border-solid border-4 border-gray-400 prose m-6 p-6">${DOMPurify.sanitize(renderedMarkdown)}</div><br>`;
+        const escapedRawMarkdown = DOMPurify.sanitize(markdownText);
+
+        htmlContent += `
+            <br>
+            <div class="markdown-snippet border-solid border-4 border-gray-400 prose m-6 px-6 py-10 relative" data-raw="${encodeURIComponent(escapedRawMarkdown)}" data-mode="rendered">
+                <div class="button-container absolute top-2 right-2 space-x-1 mb-2">
+                    <button class="toggle-markdown text-xs px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">View Raw Syntax</button>
+                    <button class="copy-markdown text-xs px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">Copy</button>
+                </div>
+                <div class="content">${DOMPurify.sanitize(renderedMarkdown)}</div>
+            </div>
+            <br>
+        `;
 
         lastIndex = mdSnippetRegex.lastIndex;
     }
@@ -58,6 +70,49 @@ const processBotResponse = (response) => {
 
     return htmlContent;
 }
+
+// Event Listener for Toggle and Copy Buttons
+messagesContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('toggle-markdown')) {
+        const snippetDiv = e.target.closest('.markdown-snippet');
+        const contentDiv = snippetDiv.querySelector('.content');
+        const rawMarkdown = decodeURIComponent(snippetDiv.getAttribute('data-raw'));
+        const currentMode = snippetDiv.getAttribute('data-mode');
+
+        if (currentMode === 'rendered') {
+            // Switch to raw markdown
+            contentDiv.innerHTML = `<pre class="whitespace-pre-wrap">${rawMarkdown}</pre>`;
+            snippetDiv.setAttribute('data-mode', 'raw');
+            e.target.textContent = 'View Rendered Markdown';
+        } else {
+            // Switch to rendered markdown
+            const renderedMarkdown = marked.parse(rawMarkdown);
+            contentDiv.innerHTML = DOMPurify.sanitize(renderedMarkdown);
+            snippetDiv.setAttribute('data-mode', 'rendered');
+            e.target.textContent = 'View Raw Syntax';
+        }
+    }
+
+    if (e.target.classList.contains('copy-markdown')) {
+        const snippetDiv = e.target.closest('.markdown-snippet');
+        const rawMarkdown = decodeURIComponent(snippetDiv.getAttribute('data-raw'));
+        
+        // Copy to clipboard
+        navigator.clipboard.writeText(rawMarkdown).then(() => {
+            // Provide feedback to the user
+            const originalText = e.target.textContent;
+            e.target.textContent = 'Copied!';
+            e.target.disabled = true;
+            setTimeout(() => {
+                e.target.textContent = originalText;
+                e.target.disabled = false;
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+            alert('Failed to copy markdown.');
+        });
+    }
+});
 
 // Function to create message elements
 const createMessageElement = (text, sender) => {
