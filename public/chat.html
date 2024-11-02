@@ -3,27 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Interface</title>
+    <title>DocuBot</title>
     <link href="/dist/style.css" rel="stylesheet">
+    <link rel="icon" href="./icon.svg" type="image/png">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.7/purify.min.js"></script>
 </head>
 <body class="flex items-center justify-center h-screen w-screen bg-gray-100">
-    <div id="chat-container" class="w-[95vw] h-[95vh] bg-white shadow-lg flex flex-col">
-        <div id="messages" class="flex flex-col flex-1 overflow-auto p-8"></div>
-        <div class="flex p-4">
-            <input
-                type="text"
-                id="user-input"
-                placeholder="Type your message..."
-                class="flex-1 border border-gray-300 rounded px-3 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-            <button
-                id="send-button"
-                class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition-colors mr-2"
-            >
-                Send
-            </button>
+    <div id="chat-container" class="w-[95vw] h-[95vh] bg-white shadow-lg flex">
+        <!-- Chat Messages and Input -->
+        <div id="left-panel" class="flex flex-col" style="width: 66.6666%;">
+            <div id="messages" class="flex flex-col flex-1 overflow-auto p-8"></div>
+            <div class="flex p-4">
+                <input
+                    type="text"
+                    id="user-input"
+                    placeholder="Type your message..."
+                    class="flex-1 border border-gray-300 rounded px-3 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                <button
+                    id="send-button"
+                    class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 transition-colors mr-2"
+                >
+                    Send
+                </button>
             <button
               id="quick-start-button"
               class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 disabled:bg-gray-200 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed"
@@ -87,6 +90,28 @@
             <button id="cancel-btn" type="button" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100">Cancel</button>
           </div>
         </form>
+            </div>
+        </div>
+
+        <!-- Divider -->
+        <div id="divider" class="divider"></div>
+
+        <!-- Right Panel: Markdown Editor and Preview -->
+        <div id="right-panel" class="flex flex-col" style="width: 33.3333%;">
+            <!-- Tab Navigation -->
+            <div class="flex border-b border-gray-300">
+                <button id="editor-tab" class="flex-1 py-2 px-4 text-center bg-gray-100 hover:bg-gray-200 focus:outline-none">Editor</button>
+                <button id="preview-tab" class="flex-1 py-2 px-4 text-center bg-gray-100 hover:bg-gray-200 focus:outline-none">Preview</button>
+            </div>
+            <!-- Tabs -->
+            <div id="tab-content" class="flex-1 p-4 overflow-auto flex flex-col">
+                <!-- Editor -->
+                <textarea id="markdown-editor" class="hidden flex-1 border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter your markdown here..."></textarea>
+                <!-- Preview -->
+                <div id="markdown-preview" class="prose hidden flex-1">
+                    <!-- Rendered Markdown will appear here -->
+                </div>
+            </div>            
       </div>
     </div>
     <script src="script.js"></script>

@@ -9,6 +9,28 @@ const submitBtn = document.getElementById('submit-btn');
 const messagesContainer = document.getElementById('messages');
 let conversationHistory = [];
 
+// --------------------- Markdown Editor ---------------------
+const previewTab = document.getElementById('preview-tab');
+const editorTab = document.getElementById('editor-tab');
+const markdownPreview = document.getElementById('markdown-preview');
+const markdownEditor = document.getElementById('markdown-editor');
+
+// --------------------- Resizable Divider ---------------------
+const divider = document.getElementById('divider');
+const leftPanel = document.getElementById('left-panel');
+const rightPanel = document.getElementById('right-panel');
+
+let isDragging = false;
+
+const participantID = localStorage.getItem('participantID');
+if (!participantID) {
+    alert('Please enter a participant ID.');
+    window.location.href = '/';
+}
+
+// --------------------- Chat Functionality ---------------------
+
+// Function to process bot responses with Markdown
 const processBotResponse = (response) => {
     const mdSnippetRegex = /<mdsnippet>([\s\S]*?)<\/mdsnippet>/g;
     let lastIndex = 0;
@@ -37,15 +59,16 @@ const processBotResponse = (response) => {
     return htmlContent;
 }
 
+// Function to create message elements
 const createMessageElement = (text, sender) => {
     const messageDiv = document.createElement('div');
-    messageDiv.classList.add('max-w-[70%]', 'p-3', 'rounded-lg', 'mb-2');
+    messageDiv.classList.add('max-w-fit', 'p-3', 'rounded-lg', 'mb-2');
 
     if (sender === 'user') {
-        messageDiv.classList.add('self-start', 'bg-blue-200');
+        messageDiv.classList.add('bg-blue-200');
         messageDiv.textContent = text;
     } else {
-        messageDiv.classList.add('self-end', 'bg-gray-200');
+        messageDiv.classList.add('bg-gray-200');
         
         const processedContent = processBotResponse(text);
         messageDiv.innerHTML = processedContent;
@@ -53,7 +76,7 @@ const createMessageElement = (text, sender) => {
     return messageDiv;
 }
 
-
+// Function to send messages
 const sendMessage = async () => {
     const userInput  = inputField.value.trim();
     inputField.value = '';
@@ -84,9 +107,9 @@ const sendMessage = async () => {
         }
 
         const data = await response.json();
-        console.log(`data after response:`, data);
+        console.log('data after response:', data);
 
-        // add user input and bot response to the conversation history
+        // Add user input and bot response to the conversation history
         conversationHistory.push({ role: 'user', content: userInput });
         conversationHistory.push({ role: 'assistant', content: data.message });
 
@@ -102,21 +125,20 @@ const sendMessage = async () => {
     }
 }
 
-quickStartBtn.addEventListener('click', () => {
-  quickStartForm.removeAttribute('style');
-})
-
 sendBtn.addEventListener('click', async () => {
     sendMessage();
     logEvent('click', 'Send Button');
 });
 
-inputField.addEventListener('keypress', async (e) => {
+inputField.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-      sendMessage();
+        sendMessage();
     }
 });
 
+// --------------------- Event Logging ---------------------
+
+// Event Logging Function
 function logEvent(type, element) {
     fetch('/log-event', {
         method: 'POST',
@@ -125,66 +147,72 @@ function logEvent(type, element) {
     });
 }
 
-function closeQuickStartForm() {
-    quickStartForm.attributeStyleMap.set('display', 'none');
-}
+// Click event listener
+sendBtn.addEventListener('click', () => {
+    logEvent('click', 'Send Button');
+});
 
+
+// Mouseover event listener
 inputField.addEventListener('mouseover', () => {
     logEvent('hover', 'User Input');
 });
 
+// Keypress event listener
 inputField.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         logEvent('enter', 'User Input');
     }
 });
 
+// Focus event listener
 inputField.addEventListener('focus', () => {
     logEvent('focus', 'User Input');
 });
 
-closeBtn.addEventListener('click', () => {
-  closeQuickStartForm();
-});
-
-cancelBtn.addEventListener('click', () => {
-  closeQuickStartForm();
-});
-
-const participantID = localStorage.getItem('participantID');
-if (!participantID) {
-    alert('Please enter a participant ID.');
-    window.location.href = '/';
-}
+// --------------------- Load Conversation History ---------------------
 
 // Function to fetch and load existing conversation history
 async function loadConversationHistory() {
-    const response = await fetch('/history', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ participantID })
-    });
-    
-    const data = await response.json();
-
-
-    if (data.interactions && data.interactions.length > 0) {
-        quickStartBtn.disabled = true;
-        data.interactions.forEach(interaction => {
-            const userMessageDiv = createMessageElement(interaction.userInput, 'user');
-            messagesContainer.appendChild(userMessageDiv);
-
-            // Append bot response
-            const botMessageDiv = createMessageElement(interaction.botResponse, 'bot');
-            messagesContainer.appendChild(botMessageDiv);
-
-            // Add to conversation history
-            conversationHistory.push({ role: 'user', content: interaction.userInput });
-            conversationHistory.push({ role: 'assistant', content: interaction.botResponse });
+    try {
+        const response = await fetch('/history', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ participantID })
         });
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+        if (!response.ok) {
+            throw new Error(`Failed to load history: ${response.statusText}`);
+        }
+
+        // Parse the response
+        const data = await response.json();
+        
+        // Display conversation history
+        if (data.interactions && data.interactions.length > 0) {
+            data.interactions.forEach(interaction => {
+                const userMessageDiv = createMessageElement(interaction.userInput, 'user');
+                messagesContainer.appendChild(userMessageDiv);
+
+                // Append bot response
+                const botMessageDiv = createMessageElement(interaction.botResponse, 'bot');
+                messagesContainer.appendChild(botMessageDiv);
+
+                // Add to conversation history
+                conversationHistory.push({ role: 'user', content: interaction.userInput });
+                conversationHistory.push({ role: 'assistant', content: interaction.botResponse });
+            });
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    } catch (error) {
+        console.error('Error loading conversation history:', error);
     }
 }
+
+// Load conversation history when the window loads
+window.onload = loadConversationHistory;
+
+// --------------------- Multi-Select Dropdown ---------------------
 
 const selectedTags = document.getElementById("selectedTags");
 const optionsDropdown = document.getElementById("optionsDropdown");
@@ -193,75 +221,199 @@ const caretIcon = document.getElementById("caretIcon");
 const options = ["JavaScript", "HTML/CSS", "Python", "TypeScript", "Bash/Shell", "Java", "C#", "C++", "C", "PHP", "Go", "Rust", "Kotlin", "Ruby", "Swift"];
 const selected = new Set();
 
+// Function to toggle the dropdown
 function toggleDropdown() {
-  optionsDropdown.classList.toggle("hidden");
-  caretIcon.classList.toggle("rotate-180");
+    optionsDropdown.classList.toggle("hidden");
+    caretIcon.classList.toggle("rotate-180");
 }
 
-function addOption(option) {
-  if (selected.has(option)) return;
-  selected.add(option);
-  const tag = document.createElement("span");
-  tag.className = "bg-gray-200 text-gray-700 px-2 py-1 rounded-full flex items-center space-x-1 mr-1 mb-1";
-  tag.innerHTML = `${option} <button onclick="removeOption('${option}')">×</button>`;
-  selectedTags.appendChild(tag);
-  updatePlaceholder();
+// Function to close the dropdown
+function closeQuickStartForm() {
+    quickStartForm.attributeStyleMap.set('display', 'none');
 }
 
-function removeOption(option) {
-  selected.delete(option);
-  Array.from(selectedTags.children).forEach(child => {
-    if (child.textContent.includes(option)) child.remove();
-  });
-  updatePlaceholder();
-}
-
+// Function to update the placeholder text
 function updatePlaceholder() {
-  const input = document.querySelector("#multiSelect input");
-  input.placeholder = selected.size ? "" : "Select programming languages...";
+    const input = document.querySelector("#multiSelect input");
+    input.placeholder = selected.size ? "" : "Select programming languages...";
 }
 
+// Function to add an option to the selected tags
+function addOption(option) {
+    if (selected.has(option)) return;
+    selected.add(option);
+    const tag = document.createElement("span");
+    tag.className = "bg-gray-200 text-gray-700 px-2 py-1 rounded-full flex items-center space-x-1 mr-1 mb-1";
+    tag.innerHTML = `${option} <button onclick="removeOption('${option}')">×</button>`;
+    selectedTags.appendChild(tag);
+    updatePlaceholder();
+}
+
+// Function to remove an option from the selected tags
+function removeOption(option) {
+    selected.delete(option);
+    Array.from(selectedTags.children).forEach(child => {
+        if (child.textContent.includes(option)) child.remove();
+    });
+    updatePlaceholder();
+}
+
+// Event Listeners for Multi-Select Dropdown
 document.addEventListener("DOMContentLoaded", () => {
-  const ul = document.getElementById("optionsList");
-  options.forEach(option => {
-    const li = document.createElement("li");
-    li.className = "px-4 py-2 hover:bg-gray-100 cursor-pointer";
-    li.innerText = option;
-    li.onclick = () => addOption(option);
-    ul.appendChild(li);
-  });
+    const ul = document.getElementById("optionsList");
+    options.forEach(option => {
+        const li = document.createElement("li");
+        li.className = "px-4 py-2 hover:bg-gray-100 cursor-pointer";
+        li.innerText = option;
+        li.onclick = () => addOption(option);
+        ul.appendChild(li);
+    });
 });
 
+// Event Listener for Quick Start Form submission
 quickStartForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const projectName = document.getElementById("projectName").value;
-  const programmingLanguages = Array.from(selected);
-  const fileName = document.getElementById("fileName").value;
-  const fileContent = document.getElementById("fileContent").value;
+    e.preventDefault();
+    const projectName = document.getElementById("projectName").value;
+    const programmingLanguages = Array.from(selected);
+    const fileName = document.getElementById("fileName").value;
+    const fileContent = document.getElementById("fileContent").value;
 
-  if (!projectName || programmingLanguages.length === 0 || !fileName || !fileContent) {
-    alert("Please fill in all fields.");
-    return;
-  }
+    if (!projectName || programmingLanguages.length === 0 || !fileName || !fileContent) {
+        alert("Please fill in all fields.");
+        return;
+    }
 
-  const response = await fetch("/project-info", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ projectName, programmingLanguages, configFile: { name: fileName, content: fileContent } }),
-  });
+    const response = await fetch("/project-info", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectName, programmingLanguages, configFile: { name: fileName, content: fileContent } }),
+    });
 
-  if (response.ok) {
-    closeQuickStartForm();
-    projectName.value = "";
-    selected.clear();
-    fileName.value = "";
-    fileContent.value = "";
-    quickStartBtn.disabled = true;
-    alert("Project information saved successfully.");
-  }
+    if (response.ok) {
+        closeQuickStartForm();
+        projectName.value = "";
+        selected.clear();
+        fileName.value = "";
+        fileContent.value = "";
+        quickStartBtn.disabled = true;
+        alert("Project information saved successfully.");
+    }
 
-  const data = await response.json();
-  console.log(data.message);
+    const data = await response.json();
+    console.log(data.message);
 })
 
-window.onload = loadConversationHistory;
+// Event Listeners for closing the Quick Start Form
+closeBtn.addEventListener('click', () => {
+    closeQuickStartForm();
+});
+
+// Event Listeners for closing the Quick Start Form
+cancelBtn.addEventListener('click', () => {
+    closeQuickStartForm();
+});
+
+quickStartBtn.addEventListener('click', () => {
+    quickStartForm.removeAttribute('style');
+})
+
+// --------------------- Markdown Editor Functionality ---------------------
+
+// Function to switch tabs
+const switchTab = (tab) => {
+    if (tab === 'preview') {
+        markdownPreview.classList.remove('hidden');
+        markdownEditor.classList.add('hidden');
+        previewTab.classList.add('bg-gray-200');
+        editorTab.classList.remove('bg-gray-200');
+    } else if (tab === 'editor') {
+        markdownEditor.classList.remove('hidden');
+        markdownPreview.classList.add('hidden');
+        editorTab.classList.add('bg-gray-200');
+        previewTab.classList.remove('bg-gray-200');
+    }
+}
+
+// Event Listeners for Tab Switching
+previewTab.addEventListener('click', () => {
+    switchTab('preview');
+});
+
+editorTab.addEventListener('click', () => {
+    switchTab('editor');
+});
+
+// Function to render Markdown in real-time
+const renderMarkdown = () => {
+    const markdownText = markdownEditor.value;
+    const rendered = marked.parse(markdownText);
+    markdownPreview.innerHTML = DOMPurify.sanitize(rendered);
+}
+
+// Event Listener for Real-time Rendering
+markdownEditor.addEventListener('input', renderMarkdown);
+
+// Initialize Tabs (Show Preview by default)
+switchTab('editor');
+
+// --------------------- Resizable Divider ---------------------
+
+// Function to handle mouse down on the divider
+const onMouseDown = (e) => {
+    e.preventDefault();
+    isDragging = true;
+    document.body.classList.add('no-select');
+
+    // Add event listeners for mouse move and mouse up
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+}
+
+// Function to handle mouse move when dragging
+const onMouseMove = (e) => {
+    if (!isDragging) return;
+
+    // Calculate the new widths based on mouse position
+    const containerOffsetLeft = document.getElementById('chat-container').getBoundingClientRect().left;
+    let pointerRelativeXpos = e.clientX - containerOffsetLeft;
+
+    // Define minimum and maximum widths (in pixels)
+    const minLeftWidth = 200;
+    const minRightWidth = 200;
+    const containerWidth = document.getElementById('chat-container').clientWidth;
+
+    // Calculate new widths in percentage
+    let leftWidth = pointerRelativeXpos;
+    let rightWidth = containerWidth - leftWidth - divider.offsetWidth;
+
+    // Enforce minimum widths
+    if (leftWidth < minLeftWidth) {
+        leftWidth = minLeftWidth;
+        rightWidth = containerWidth - leftWidth - divider.offsetWidth;
+    } else if (rightWidth < minRightWidth) {
+        rightWidth = minRightWidth;
+        leftWidth = containerWidth - rightWidth - divider.offsetWidth;
+    }
+
+    // Convert to percentage
+    const leftWidthPercent = (leftWidth / containerWidth) * 100;
+    const rightWidthPercent = (rightWidth / containerWidth) * 100;
+
+    // Apply the new widths
+    leftPanel.style.width = `${leftWidthPercent}%`;
+    rightPanel.style.width = `${rightWidthPercent}%`;
+}
+
+// Function to handle mouse up when dragging ends
+const onMouseUp = () => {
+    if (!isDragging) return;
+    isDragging = false;
+    document.body.classList.remove('no-select');
+
+    // Remove the event listeners
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+}
+
+// Attach the mouse down event to the divider
+divider.addEventListener('mousedown', onMouseDown);
