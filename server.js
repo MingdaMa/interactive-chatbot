@@ -27,6 +27,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use('/dist', express.static(path.join(__dirname, 'dist')));
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -35,18 +37,15 @@ app.get('/chat.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'chat.html'));
 });
 
-app.use('/dist', express.static(path.join(__dirname, 'dist')));
-
 app.post('/chat', async (req, res) => { 
   const { history = [], input: userInput, participantID } = req.body; // Default history
+  const systemPrompt = req.body.systemPrompt || systemPrompt;
 
   // Check for participantID
   if (!participantID) {
     return res.status(400).send('Participant ID is required');
   }
 
-  console.log('userInput:', userInput);
- 
   const messages = history.length === 0  
     ? [{ role: 'system', content: systemPrompt }, { role: 'user', content: userInput }] 
     : [{ role: 'system', content: systemPrompt }, ...history, { role: 'user', content: userInput }];
@@ -57,8 +56,6 @@ app.post('/chat', async (req, res) => {
         messages: messages, // pass messages instead of user input only
         max_tokens: 1500,
       });
-
-      console.log('response:', response);
 
       const botResponse = response.choices[0].message.content.trim();
 
@@ -112,12 +109,27 @@ app.post('/history', async (req, res) => {
   }
 });
 
+function generatePrompt(projectInfo) {
+  const { projectName, programmingLanguages, configFile: { name, content } } = projectInfo;
+  const userInput = `Here's some basic information about my project, help generate a README file given the following information:\n 
+  1. Project name: ${projectName};\n
+  2. Programming languages used in the project: ${programmingLanguages.join(', ')};\n
+  3. Configuration file: ${name} - ${content}\n`;
+
+  const systemPrompt2 = `Please specify what the project is about, how to set up the project, what the dependencies are based on the configuration file, and any other relevant information that should be included in the README file.
+  For example, you can provide a brief description of the project, installation instructions, usage examples, and any other relevant information that would help users understand and use the project. Please format dependencies as a table and code snippets as code blocks.`;
+
+  return { userInput, systemPrompt: `${systemPrompt} ${systemPrompt2}` };
+}
+
 app.post('/project-info', async (req, res) => {
-  const { projectName, programmingLanguages, configFile: { name, content } } = req.body;
+  const { projectName, programmingLanguages, configFile: { name, content }, participantID } = req.body;
 
   if (!projectName || !programmingLanguages || !name || !content) {
     return res.status(400).send('Project info is not complete!');
   }
+
+  const { userInput, systemPrompt } = generatePrompt(req.body);
 
   try {
     const projectInfo = new ProjectInfo({
@@ -128,7 +140,9 @@ app.post('/project-info', async (req, res) => {
 
     await projectInfo.save();
 
-    res.json({ message: 'Project info saved successfully' });
+    const botResponse = await axios.post('http://localhost:3000/chat', { input: userInput, systemPrompt, participantID });
+
+    res.json({ userInput, botResponse: botResponse.data.message });
   } catch (error) {
     console.error('Error fetching project info:', error.message);
     res.status(500).send('Server Error');

@@ -1716,8 +1716,7 @@ select {
 }
 
 .divider {
-  width: 5px;
-  background-color: #ccc;
+  width: 20px;
   cursor: col-resize;
 }
 
