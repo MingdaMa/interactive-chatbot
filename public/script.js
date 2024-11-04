@@ -245,17 +245,18 @@ async function loadConversationHistory() {
         
         // Display conversation history
         if (data.interactions && data.interactions.length > 0) {
+            quickStartBtn.disabled = true;
             data.interactions.forEach(interaction => {
-                const userMessageDiv = createMessageElement(interaction.userInput, 'user');
-                messagesContainer.appendChild(userMessageDiv);
+              const userMessageDiv = createMessageElement(interaction.userInput, 'user');
+              messagesContainer.appendChild(userMessageDiv);
 
-                // Append bot response
-                const botMessageDiv = createMessageElement(interaction.botResponse, 'bot');
-                messagesContainer.appendChild(botMessageDiv);
+              // Append bot response
+              const botMessageDiv = createMessageElement(interaction.botResponse, 'bot');
+              messagesContainer.appendChild(botMessageDiv);
 
-                // Add to conversation history
-                conversationHistory.push({ role: 'user', content: interaction.userInput });
-                conversationHistory.push({ role: 'assistant', content: interaction.botResponse });
+              // Add to conversation history
+              conversationHistory.push({ role: 'user', content: interaction.userInput });
+              conversationHistory.push({ role: 'assistant', content: interaction.botResponse });
             });
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
@@ -341,7 +342,7 @@ quickStartForm.addEventListener("submit", async (e) => {
     const response = await fetch("/project-info", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectName, programmingLanguages, configFile: { name: fileName, content: fileContent } }),
+        body: JSON.stringify({ projectName, programmingLanguages, configFile: { name: fileName, content: fileContent }, participantID }),
     });
 
     if (response.ok) {
@@ -351,11 +352,17 @@ quickStartForm.addEventListener("submit", async (e) => {
         fileName.value = "";
         fileContent.value = "";
         quickStartBtn.disabled = true;
-        alert("Project information saved successfully.");
     }
 
-    const data = await response.json();
-    console.log(data.message);
+    const { userInput, botResponse } = await response.json();
+
+    const userMessageElement = createMessageElement(userInput, 'user');
+    messagesContainer.appendChild(userMessageElement);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+    const botMessageElement = createMessageElement(botResponse, 'bot');
+    messagesContainer.appendChild(botMessageElement);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
 })
 
 // Event Listeners for closing the Quick Start Form
