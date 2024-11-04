@@ -7,6 +7,7 @@ const closeBtn = document.getElementById('close-btn');
 const cancelBtn = document.getElementById('cancel-btn');
 const submitBtn = document.getElementById('submit-btn');
 const messagesContainer = document.getElementById('messages');
+
 let conversationHistory = [];
 
 // --------------------- Markdown Editor ---------------------
@@ -268,8 +269,66 @@ async function loadConversationHistory() {
 // Load conversation history when the window loads
 window.onload = loadConversationHistory;
 
-// --------------------- Multi-Select Dropdown ---------------------
+// --------------------- Multi-input Dropdown ---------------------
+const authorNamesContainer = document.getElementById("authorNamesContainer");
+const authorNamesInput = document.getElementById("authorNamesInput");
+const authorNames = document.getElementById("authorNames");
 
+const githubHandlesContainer = document.getElementById("githubHandlesContainer");
+const githubHandlesInput = document.getElementById("githubHandlesInput");
+const githubHandles = document.getElementById("githubHandles");
+
+// Array to store author names tag
+const authorTags = new Set();
+const githubHandlesTags = new Set();
+
+// Function to add a new tag element
+function addTag(tagText, tagsSet, tagsContainer) {
+  if (!tagsSet.has(tagText)) {
+    tagsSet.add(tagText);
+
+    // Create the tag element
+    const tagElement = document.createElement("span");
+    tagElement.classList.add("bg-gray-200", "text-gray-700", "px-2", "py-1", "rounded-full", "flex", "items-center", "gap-1");
+    tagElement.innerText = tagText;
+
+    // Create the remove button for each tag
+    const removeButton = document.createElement("button");
+    removeButton.classList.add("text-gray-500", "hover:text-gray-700", "focus:outline-none");
+    removeButton.innerHTML = "&times;";
+    removeButton.onclick = () => removeTag(tagText, tagElement, tagsSet);
+
+    // Append remove button to tag element and tag element to the authornames container
+    tagElement.appendChild(removeButton);
+    tagsContainer.appendChild(tagElement);
+  }
+}
+
+// Function to handle the Enter key press
+function handleKeyDown(event, inputElement, tagsSet, tagsContainer) {
+  if (event.key === "Enter" && inputElement.value.trim() !== "") {
+    event.preventDefault(); // Prevent form submission or default behavior
+
+    // Add tag to the tags array and clear the input
+    const tagText = inputElement.value.trim();
+    addTag(tagText, tagsSet, tagsContainer);
+    inputElement.value = ""; // Clear the input field
+  }
+}
+
+// Function to remove a tag
+function removeTag(tagText, tagElement, tagsSet) {
+  if (tagsSet.has(tagText)) {
+    tagsSet.delete(tagText); // Remove from tags Set
+    tagElement.remove(); // Remove the element from the DOM
+  }
+}
+
+// Attach the keydown event listener to the input
+authorNamesInput.addEventListener("keydown", (e) => handleKeyDown(e, authorNamesInput, authorTags, authorNames));
+githubHandlesInput.addEventListener("keydown", (e) => handleKeyDown(e, githubHandlesInput, githubHandlesTags, githubHandles));
+ 
+// --------------------- Multi-Select Dropdown ---------------------
 const selectedTags = document.getElementById("selectedTags");
 const optionsDropdown = document.getElementById("optionsDropdown");
 const caretIcon = document.getElementById("caretIcon");
@@ -330,7 +389,11 @@ document.addEventListener("DOMContentLoaded", () => {
 quickStartForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const projectName = document.getElementById("projectName").value;
+    const authorNames = Array.from(authorTags);
+    const githubHandles = Array.from(githubHandlesTags);
+    const githubRepo = document.getElementById("githubRepo").value;
     const programmingLanguages = Array.from(selected);
+    const description = document.getElementById("description").value;
     const fileName = document.getElementById("fileName").value;
     const fileContent = document.getElementById("fileContent").value;
 
@@ -342,7 +405,7 @@ quickStartForm.addEventListener("submit", async (e) => {
     const response = await fetch("/project-info", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectName, programmingLanguages, configFile: { name: fileName, content: fileContent }, participantID }),
+        body: JSON.stringify({ projectName, programmingLanguages, authorNames, githubHandles, githubRepo, description, configFile: { name: fileName, content: fileContent }, participantID }),
     });
 
     if (response.ok) {

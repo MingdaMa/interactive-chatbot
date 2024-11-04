@@ -55,9 +55,10 @@
     </div>
   </div>
 
+  <!-- Quick Start Form Modal -->
   <div class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center" style="display: none"
     id="quick-start">
-    <div class="bg-white w-[600px] p-6 rounded-lg shadow-lg relative">
+    <div class="bg-white w-[800px] h-[600px] p-6 rounded-lg shadow-lg relative overflow-y-auto">
       <!-- Close Button -->
       <button id="close-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
@@ -70,6 +71,46 @@
         <div>
           <label class="block text-sm font-medium text-gray-700">Project Name</label>
           <input id="projectName" type="text" placeholder="Enter project name..."
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Author names</label>
+          <div class="border border-gray-300 rounded-lg p-2 flex flex-wrap gap-2" id="authorNamesContainer">
+            <!-- Tags will be dynamically added here -->
+            <div class="flex items-center flex-wrap gap-1" id="authorNames"></div>
+            
+            <!-- Input field for adding tags -->
+            <input
+              type="text"
+              id="authorNamesInput"
+              class="border-none focus:outline-none flex-grow min-w-[100px] p-1"
+              placeholder="Add a name and press Enter"
+              onkeydown="handleKeyDown(event)"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Github handle</label>
+          <div class="border border-gray-300 rounded-lg p-2 flex flex-wrap gap-2" id="githubHandlesContainer">
+            <!-- Tags will be dynamically added here -->
+            <div class="flex items-center flex-wrap gap-1" id="githubHandles"></div>
+            
+            <!-- Input field for adding tags -->
+            <input
+              type="text"
+              id="githubHandlesInput"
+              class="border-none focus:outline-none flex-grow min-w-[100px] p-1"
+              placeholder="Add a name and press Enter"
+              onkeydown="handleKeyDown(event)"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Github repository link</label>
+          <input id="githubRepo" type="url" placeholder="Enter github repository..."
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
         </div>
 
@@ -91,7 +132,6 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
             </svg>
           </div>
-
           <!-- Dropdown Menu -->
           <div
             class="absolute left-6 right-6 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto hidden z-10"
@@ -100,6 +140,12 @@
               <!-- Options will be dynamically inserted here -->
             </ul>
           </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Project description</label>
+          <textarea id="description" placeholder="Enter project description... (what this project is about or what you want it to be etc.)" rows="3"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
         </div>
 
         <div>
@@ -119,7 +165,7 @@
       </form>
     </div>
   </div>
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 
 </html>

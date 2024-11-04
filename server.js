@@ -110,32 +110,48 @@ app.post('/history', async (req, res) => {
 });
 
 function generatePrompt(projectInfo) {
-  const { projectName, programmingLanguages, configFile: { name, content } } = projectInfo;
-  const userInput = `Here's some basic information about my project, help generate a README file given the following information:\n 
-  1. Project name: ${projectName};\n
-  2. Programming languages used in the project: ${programmingLanguages.join(', ')};\n
-  3. Configuration file: ${name} - ${content}\n`;
+  let userInput = `Here's some basic information about my project, help generate a README file given the following information:\n`;
+  let index = 0;
+  for (const key in projectInfo) {
+    index += 1;
+    const title = key
+      .replace(/([A-Z])/g, " $1") // Insert space before each uppercase letter
+      .replace(/^./, match => match.toUpperCase()); // Capitalize the first letter
 
-  const systemPrompt2 = `Please specify what the project is about, how to set up the project, what the dependencies are based on the configuration file, and any other relevant information that should be included in the README file.
-  For example, you can provide a brief description of the project, installation instructions, usage examples, and any other relevant information that would help users understand and use the project. Please format dependencies as a table and code snippets as code blocks.`;
+    if (projectInfo[key] instanceof Array) { 
+      userInput += `${index}. ${title}: ${projectInfo[key].join(', ')};\n`;
+     } else if (key === 'configFile') {
+      userInput += `${index}. ${title}: ${projectInfo[key].name} - ${projectInfo[key].content};\n`;
+     } else {
+      userInput += `${index}. ${title}: ${projectInfo[key]};\n`;
+     }
+  }
+  console.log(userInput);
+  const readmeGenerationPrompt = `Please specify what the project is about, how to set up the project, what the dependencies are based on the configuration file, and any other relevant information that should be included in the README file.
+  Please format dependencies as a table and code snippets as code blocks. Author names and their github handles are stored in two different arrays in the same order. Please format the authors names as a list and link the names to their github profile page.`;
 
-  return { userInput, systemPrompt: `${systemPrompt} ${systemPrompt2}` };
+  return { userInput, systemPrompt: `${systemPrompt} ${readmeGenerationPrompt}` };
 }
 
-app.post('/project-info', async (req, res) => {
-  const { projectName, programmingLanguages, configFile: { name, content }, participantID } = req.body;
+app.post('/project-info', async (req, res) => { 
+  const { participantID, ...projectInfo } = req.body;
+  const { projectName, programmingLanguages, authorNames, githubHandles, githubRepo, description, configFile: { name, content } } = projectInfo;
 
   if (!projectName || !programmingLanguages || !name || !content) {
     return res.status(400).send('Project info is not complete!');
   }
 
-  const { userInput, systemPrompt } = generatePrompt(req.body);
+  const { userInput, systemPrompt } = generatePrompt(projectInfo);
 
   try {
     const projectInfo = new ProjectInfo({
       projectName,
       programmingLanguages,
-      configFile: { name, content }
+      configFile: { name, content },
+      authorNames,
+      githubHandles,
+      githubRepo,
+      description
     });
 
     await projectInfo.save();
