@@ -88,14 +88,14 @@
               type="text"
               id="authorNamesInput"
               class="border-none focus:outline-none flex-grow min-w-[100px] p-1"
-              placeholder="Add a name and press Enter"
+              placeholder="Add a name and press enter to add"
               onkeydown="handleKeyDown(event)"
             />
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">Github username&#40;s&#41;</label>
+          <label class="block text-sm font-medium text-gray-700">Github Username&#40;s&#41;</label>
           <div class="border border-gray-300 rounded-lg p-2 flex flex-wrap gap-2" id="githubHandlesContainer">
             <!-- Tags will be dynamically added here -->
             <div class="flex items-center flex-wrap gap-1" id="githubHandles"></div>
@@ -105,14 +105,14 @@
               type="text"
               id="githubHandlesInput"
               class="border-none focus:outline-none flex-grow min-w-[100px] p-1"
-              placeholder="Add github username&#40;s&#41; (in the same order as author name) and press Enter"
+              placeholder="Add a github username (in the same order as author&#40;s&#41;) and press enter to add"
               onkeydown="handleKeyDown(event)"
             />
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">Github repository link</label>
+          <label class="block text-sm font-medium text-gray-700">Github Repository Link</label>
           <input id="githubRepo" type="url" placeholder="Enter github repository..."
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
         </div>
@@ -146,16 +146,16 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">Project description</label>
+          <label class="block text-sm font-medium text-gray-700">Project Description</label>
           <textarea id="description" placeholder="Enter project description... (what this project is about or what you want it to be etc.)" rows="3"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">Configuration file</label>
-          <input id="fileName" type="text" placeholder="Enter file name..."
+          <label class="block text-sm font-medium text-gray-700">Configuration File</label>
+          <input id="fileName" type="text" placeholder="Enter the configuration file name..."
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500" />
-          <textarea id="fileContent" placeholder="Enter configuration file..." rows="3"
+          <textarea id="fileContent" placeholder="Enter configuration file contents..." rows="3"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
         </div>
 
