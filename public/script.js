@@ -1,3 +1,5 @@
+window.jsPDF = window.jspdf.jsPDF
+
 const inputField = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-button');
 const quickStartBtn = document.getElementById('quick-start-button');
@@ -15,6 +17,9 @@ const previewTab = document.getElementById('preview-tab');
 const editorTab = document.getElementById('editor-tab');
 const markdownPreview = document.getElementById('markdown-preview');
 const markdownEditor = document.getElementById('markdown-editor');
+
+// --------------------- Download Buttons ---------------------
+const downloadMarkdownBtn = document.getElementById('downloadMarkdownBtn');
 
 // --------------------- Resizable Divider ---------------------
 const divider = document.getElementById('divider');
@@ -472,14 +477,31 @@ editorTab.addEventListener('click', () => {
 const renderMarkdown = () => {
     const markdownText = markdownEditor.value;
     const rendered = marked.parse(markdownText);
-    markdownPreview.innerHTML = DOMPurify.sanitize(rendered);
+    const markdownDiv = document.createElement('div');
+    markdownDiv.setAttribute('id', 'markdown-content');
+    markdownDiv.innerHTML = DOMPurify.sanitize(rendered);
+    markdownPreview.append(markdownDiv);
 }
 
 // Event Listener for Real-time Rendering
-markdownEditor.addEventListener('input', renderMarkdown);
+markdownEditor.addEventListener('change', renderMarkdown);
 
 // Initialize Tabs (Show Preview by default)
 switchTab('editor');
+
+// --------------------- Download Buttons ---------------------
+
+// Markdown Download Function
+downloadMarkdownBtn.addEventListener("click", function () {
+  const markdownContent = markdownEditor.value;
+  // Create a Blob with the Markdown content
+  const blob = new Blob([markdownContent], { type: "text/markdown" });
+  // Create a link for the download
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "README.md";
+  link.click();
+});
 
 // --------------------- Resizable Divider ---------------------
 
