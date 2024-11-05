@@ -10,3 +10,12 @@
 .no-select {
     user-select: none;
 }
+
+@media print {
+  #markdown-content {
+    font-size: 8px; /* Adjust as needed */
+  }
+  h1, h2, h3, p {
+    page-break-inside: avoid; /* Prevent breaking headings and paragraphs */
+  }
+}
