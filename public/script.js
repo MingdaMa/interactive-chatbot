@@ -1,5 +1,3 @@
-window.jsPDF = window.jspdf.jsPDF
-
 const inputField = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-button');
 const quickStartBtn = document.getElementById('quick-start-button');
