@@ -281,9 +281,14 @@ const githubHandlesContainer = document.getElementById("githubHandlesContainer")
 const githubHandlesInput = document.getElementById("githubHandlesInput");
 const githubHandles = document.getElementById("githubHandles");
 
+const environmentVariablesContainer = document.getElementById("environmentVariablesContainer");
+const environmentVariablesInput = document.getElementById("environmentVariablesInput");
+const environmentVariables = document.getElementById("environmentVariables");
+
 // Array to store author names tag
 const authorTags = new Set();
 const githubHandlesTags = new Set();
+const environmentVariablesTags = new Set();
 
 // Function to add a new tag element
 function addTag(tagText, tagsSet, tagsContainer) {
@@ -330,6 +335,7 @@ function removeTag(tagText, tagElement, tagsSet) {
 // Attach the keydown event listener to the input
 authorNamesInput.addEventListener("keydown", (e) => handleKeyDown(e, authorNamesInput, authorTags, authorNames));
 githubHandlesInput.addEventListener("keydown", (e) => handleKeyDown(e, githubHandlesInput, githubHandlesTags, githubHandles));
+environmentVariablesInput.addEventListener("keydown", (e) => handleKeyDown(e, environmentVariablesInput, environmentVariablesTags, environmentVariables));
  
 // --------------------- Multi-Select Dropdown ---------------------
 const selectedTags = document.getElementById("selectedTags");
@@ -393,22 +399,19 @@ quickStartForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const projectName = document.getElementById("projectName").value;
     const authorNames = Array.from(authorTags);
-    const githubHandles = Array.from(githubHandlesTags);
+    const githubUsernames = Array.from(githubHandlesTags);
     const githubRepo = document.getElementById("githubRepo").value;
+    const license = document.getElementById("license").value;
     const programmingLanguages = Array.from(selected);
+    const environmentVariables = Array.from(environmentVariablesTags);
     const description = document.getElementById("description").value;
     const fileName = document.getElementById("fileName").value;
     const fileContent = document.getElementById("fileContent").value;
 
-    if (!projectName || programmingLanguages.length === 0 || !fileName || !fileContent) {
-        alert("Please fill in all fields.");
-        return;
-    }
-
     const response = await fetch("/project-info", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectName, programmingLanguages, authorNames, githubHandles, githubRepo, description, configFile: { name: fileName, content: fileContent }, participantID }),
+        body: JSON.stringify({ projectName, programmingLanguages, authorNames, githubUsernames, githubRepo, license, environmentVariables, description, configFile: { name: fileName, content: fileContent }, participantID }),
     });
 
     if (response.ok) {

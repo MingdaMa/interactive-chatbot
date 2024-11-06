@@ -117,6 +117,12 @@
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
         </div>
 
+        <div>
+          <label class="block text-sm font-medium text-gray-700">License</label>
+          <input id="license" type="url" placeholder="Enter license..."
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </div>
+
         <!-- Multiselect Field -->
         <div>
           <label class="block text-sm font-medium text-gray-700">Programming Languages</label>
@@ -142,6 +148,23 @@
             <ul id="optionsList" class="py-2">
               <!-- Options will be dynamically inserted here -->
             </ul>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Environment Variable&#40;s&#41;</label>
+          <div class="border border-gray-300 rounded-lg p-2 flex flex-wrap gap-2" id="environmentVariablesContainer">
+            <!-- Tags will be dynamically added here -->
+            <div class="flex items-center flex-wrap gap-1" id="environmentVariables"></div>
+            
+            <!-- Input field for adding tags -->
+            <input
+              type="text"
+              id="environmentVariablesInput"
+              class="border-none focus:outline-none flex-grow min-w-[100px] p-1"
+              placeholder="Add environment variable(s) and press enter to add..."
+              onkeydown="handleKeyDown(event)"
+            />
           </div>
         </div>
 
