@@ -468,6 +468,7 @@ const switchTab = (tab) => {
 // Event Listeners for Tab Switching
 previewTab.addEventListener('click', () => {
     switchTab('preview');
+    renderMarkdown();
 });
 
 editorTab.addEventListener('click', () => {
@@ -478,16 +479,12 @@ editorTab.addEventListener('click', () => {
 const renderMarkdown = () => {
     const markdownText = markdownEditor.value;
     const rendered = marked.parse(markdownText);
-    const markdownDiv = document.createElement('div');
-    markdownDiv.setAttribute('id', 'markdown-content');
-    markdownDiv.innerHTML = DOMPurify.sanitize(rendered);
-    markdownPreview.append(markdownDiv);
+    const renderedMarkdownDiv = document.getElementById('rendered-markdown');
+    renderedMarkdownDiv.innerHTML = DOMPurify.sanitize(rendered);
 }
 
-// Event Listener for Real-time Rendering
-markdownEditor.addEventListener('change', renderMarkdown);
+markdownEditor.addEventListener('input', renderMarkdown);
 
-// Initialize Tabs (Show Preview by default)
 switchTab('editor');
 
 // --------------------- Download Buttons ---------------------
