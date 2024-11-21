@@ -165,6 +165,28 @@ app.post('/project-info', async (req, res) => {
   }
 });
 
+app.post('/redirect-to-survey', (req, res) => {
+  const { participantID, surveyCategory } = req.body;  // Getting participantID from request body
+  
+  let qualtricsBaseUrl;
+  // Base Qualtrics URL from Step 2
+  if (surveyCategory === 'demographics') {
+    qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_3EqGE3EDAi4bGUm';
+  } else if (surveyCategory === 'pre-task') {
+    // TODO: Update the Qualtrics URL for the pre-task survey
+    qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_3EqGE3EDAi4bGUm';
+  } else if (surveyCategory === 'post-task') {
+     // TODO: Update the Qualtrics URL for the post-task survey
+    qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_3EqGE3EDAi4bGUm';
+  }
+  
+  // Add the participant ID as a URL parameter
+  const surveyUrl = `${qualtricsBaseUrl}?participantID=${encodeURIComponent(participantID)}`;
+  
+  // Send the URL back to the client
+  res.send(surveyUrl);
+});
+
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);  
 });

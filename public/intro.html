@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Workflow</title>
+    <link href="/dist/style.css" rel="stylesheet">
+</head>
+<body class="font-sans">
+    <div class="max-w-3xl mx-auto p-8">
+        <h1 class="text-3xl text-gray-800 text-center font-semibold mb-8">Study Workflow</h1>
+        
+        <div class="bg-gray-50 rounded-xl p-8 space-y-4">
+            <!-- Step 1 -->
+            <div class="relative bg-white rounded-lg shadow-md p-6">
+                <div class="absolute -left-3 top-1/2 transform -translate-y-1/2">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                        1
+                    </div>
+                </div>
+                <div class="ml-8">
+                    <button id="demographics-survey-btn" onclick="redirectToQualtrics('demographics')" class="text-blue-500 text-lg font-normal">
+                        Demographics Questionnaire
+                    </button>
+                    <p class="text-gray-600 mt-1">
+                        Please complete the demographic information before proceeding.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="relative bg-white rounded-lg shadow-md p-6">
+                <div class="absolute -left-3 top-1/2 transform -translate-y-1/2">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                        2
+                    </div>
+                </div>
+                <div class="ml-8">
+                    <button id="pre-task-assessment-survey-btn" onclick="redirectToQualtrics('pre-task-assessment')" class="text-blue-500 text-lg font-normal">
+                        Pre-Task Assessment
+                    </button>
+                    <p class="text-gray-600 mt-1">
+                        Complete the pre-task questionnaire.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="relative bg-white rounded-lg shadow-md p-6">
+                <div class="absolute -left-3 top-1/2 transform -translate-y-1/2">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                        3
+                    </div>
+                </div>
+                <div class="ml-8">
+                    <button onclick="getAIAgentByParticipantID()" class="text-blue-500 text-lg font-normal">
+                        AI Agent
+                    </button>
+                    <p class="text-gray-600 mt-1">
+                        Interact with the assigned AI agent (baseline or enhanced).
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="relative bg-white rounded-lg shadow-md p-6">
+                <div class="absolute -left-3 top-1/2 transform -translate-y-1/2">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                        4
+                    </div>
+                </div>
+                <div class="ml-8">
+                    <button id="post-task-questionnaire-survey-btn" onclick="redirectToQualtrics('post-task-questionnaire')" class="text-blue-500 text-lg font-normal">
+                        Post-Task Questionnaire
+                    </button>
+                    <p class="text-gray-600 mt-1">
+                        Complete the final questionnaire about your experience.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js" defer></script>
+</body>
+</html>

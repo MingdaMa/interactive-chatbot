@@ -562,3 +562,31 @@ const onMouseUp = () => {
 
 // Attach the mouse down event to the divider
 divider.addEventListener('mousedown', onMouseDown);
+
+function getAIAgentByParticipantID() {
+  if (participantID % 2 === 0) {
+    window.location.href = '/chat-enhanced.html';
+  } else {
+    window.location.href = '/chat-baseline.html';
+  }
+}
+
+// Function to handle redirect to Qualtrics
+function redirectToQualtrics(surveyCategory) {
+  fetch('/redirect-to-survey', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ participantID, surveyCategory })  // participantID from localStorage
+  })
+  .then(response => response.text())  // Get the URL from the response
+  .then(url => {
+    // Log the redirect event if you're using event logging
+    logEvent('redirect', 'Qualtrics Survey');
+    // Redirect to the survey
+    window.location.href = url;
+  })
+  .catch(error => {
+    console.error('Error redirecting to survey:', error);
+    alert('There was an error redirecting to the survey. Please try again.');
+  });
+}
