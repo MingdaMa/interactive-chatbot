@@ -56,31 +56,13 @@ inputField.addEventListener('keypress', async (e) => {
     }
 });
 
-function logEvent(type, element) {
+function logEvent(type, model, element) {
   fetch('/log-event', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date(), participantID: participantID })
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ eventType: type, model, elementName: element, timestamp: new Date(), participantID: participantID })
   });
 }
-
-
-sendBtn.addEventListener('click', () => {
-  logEvent('click', 'Send Button');});
-
-inputField.addEventListener('mouseover', () => {
-  logEvent('hover', 'User Input');
-});
-
-inputField.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    logEvent('enter', 'User Input');
-  }
-});
-
-inputField.addEventListener('focus', () => {
-  logEvent('focus', 'User Input');
-});
 
 const participantID = localStorage.getItem('participantID');
 if (!participantID) {
@@ -112,5 +94,27 @@ async function loadConversationHistory() {
     });
   }
 }
-  // Load history when agent loads
-  window.onload = loadConversationHistory;
+
+// Load history when agent loads
+window.onload = loadConversationHistory;
+
+sendBtn.addEventListener('click', () => {
+  logEvent('click', 'baseline', 'Send Button');});
+
+inputField.addEventListener('mouseover', () => {
+  logEvent('hover', 'baseline', 'User Input');
+});
+
+inputField.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    logEvent('enter', 'baseline', 'User Input');
+  }
+});
+
+inputField.addEventListener('focus', () => {
+  logEvent('focus', 'baseline', 'User Input');
+});
+
+inputField.addEventListener('paste', () => {
+  logEvent('paste', 'baseline', 'Paste');
+});

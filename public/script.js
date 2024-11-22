@@ -571,11 +571,11 @@ function redirectToGoogleDoc() {
 // --------------------- Event Logging ---------------------
 
 // Event Logging Function
-function logEvent(type, element) {
+function logEvent(type, model, element) {
   fetch('/log-event', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date(), participantID: participantID })
+      body: JSON.stringify({ eventType: type, model, elementName: element, timestamp: new Date(), participantID: participantID })
   });
 }
 
@@ -599,35 +599,39 @@ inputField.addEventListener('keypress', (e) => {
 
 // Focus event listener
 inputField.addEventListener('focus', () => {
-  logEvent('focus', 'User Input');
+  logEvent('focus', 'enhanced', 'User Input');
 });
 
 // Copy markdonw button event listener
 copyMarkdownBtn.addEventListener('click', () => {
-  logEvent('click', 'Copy Markdown Button');
+  logEvent('click', 'enhanced', 'Copy Markdown Button');
 });
 
 // View markdown button event listener
 viewMarkdownBtn.addEventListener('click', () => {
-  logEvent('click', 'View Markdown Button');
+  logEvent('click', 'enhanced', 'View Markdown Button');
 });
 
 // Editor tab event listener
 editorTab.addEventListener('click', () => {
-  logEvent('click', 'Editor Tab');
+  logEvent('click', 'enhanced', 'Editor Tab');
 });
 
 // Preview tab event listener
 previewTab.addEventListener('click', () => {
-  logEvent('click', 'Preview Tab');
+  logEvent('click', 'enhanced', 'Preview Tab');
 });
 
 // Download markdown button event listener
 downloadMarkdownBtn.addEventListener('click', () => {
-  logEvent('click', 'Download Markdown Button');
+  logEvent('click', 'enhanced', 'Download Markdown Button');
 });
 
-// Cmd + v event listener
-document.addEventListener('paste', (e) => {
-  logEvent('paste', 'Paste markdown');
+// Text editor event listener
+markdownEditor.addEventListener('click', () => {
+  logEvent('click', 'enhanced', 'Markdown Editor');
+});
+
+markdownEditor.addEventListener('paste', (e) => {
+  logEvent('paste', 'enhanced', 'Paste markdown');
 });

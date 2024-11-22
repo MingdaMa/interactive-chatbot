@@ -74,7 +74,7 @@ app.post('/chat', async (req, res) => {
 })
 
 app.post('/log-event', async (req, res) => {
-  const { eventType, elementName, timestamp, participantID } = req.body;
+  const { eventType, model, elementName, timestamp, participantID } = req.body;
 
   // Check for participantID
   if (!participantID) {
@@ -82,7 +82,7 @@ app.post('/log-event', async (req, res) => {
   }
 
   try {
-      const event = new EventLog({ eventType, elementName, participantID, timestamp }); 
+      const event = new EventLog({ eventType, elementName, modelType: model, participantID, timestamp }); 
       await event.save();
       res.status(200).send('Event logged successfully');
     } catch (error) {

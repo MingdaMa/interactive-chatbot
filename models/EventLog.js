@@ -5,6 +5,7 @@ const EventLogSchema = new Schema({
     participantID: String,
     eventType: String,
     elementName: String,
+    modelType: String,
     timestamp: { type: Date, default: Date.now }
 });
 
