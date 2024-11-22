@@ -8,6 +8,9 @@ const cancelBtn = document.getElementById('cancel-btn');
 const submitBtn = document.getElementById('submit-btn');
 const messagesContainer = document.getElementById('messages');
 
+const viewMarkdownBtn = document.getElementById('view-markdown-btn');
+const copyMarkdownBtn = document.getElementById('copy-markdown-btn');
+
 let conversationHistory = [];
 
 // --------------------- Markdown Editor ---------------------
@@ -56,8 +59,8 @@ const processBotResponse = (response) => {
             <br>
             <div class="markdown-snippet border-solid border-4 border-gray-400 prose m-6 px-6 py-10 relative" data-raw="${encodeURIComponent(escapedRawMarkdown)}" data-mode="rendered">
                 <div class="button-container absolute top-2 right-2 space-x-1 mb-2">
-                    <button class="toggle-markdown text-xs px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">View Raw Syntax</button>
-                    <button class="copy-markdown text-xs px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">Copy</button>
+                    <button id='view-markdown-btn' class="toggle-markdown text-xs px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">View Raw Syntax</button>
+                    <button id='copy-markdown-btn' class="copy-markdown text-xs px-2 py-1 bg-gray-300 rounded hover:bg-gray-400">Copy</button>
                 </div>
                 <div class="content">${DOMPurify.sanitize(renderedMarkdown)}</div>
             </div>
@@ -193,40 +196,6 @@ inputField.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         sendMessage();
     }
-});
-
-// --------------------- Event Logging ---------------------
-
-// Event Logging Function
-function logEvent(type, element) {
-    fetch('/log-event', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date(), participantID: participantID })
-    });
-}
-
-// Click event listener
-sendBtn.addEventListener('click', () => {
-    logEvent('click', 'Send Button');
-});
-
-
-// Mouseover event listener
-inputField.addEventListener('mouseover', () => {
-    logEvent('hover', 'User Input');
-});
-
-// Keypress event listener
-inputField.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        logEvent('enter', 'User Input');
-    }
-});
-
-// Focus event listener
-inputField.addEventListener('focus', () => {
-    logEvent('focus', 'User Input');
 });
 
 // --------------------- Load Conversation History ---------------------
@@ -590,3 +559,75 @@ function redirectToQualtrics(surveyCategory) {
     alert('There was an error redirecting to the survey. Please try again.');
   });
 }
+
+function redirectToGoogleDoc() {
+  if (participantID % 2 === 0) {
+    window.location.href = 'https://docs.google.com/document/d/1XjoGnTelt-qI_SsXLf7HIARfeDYznNG3q--tygWtCYs/edit?usp=sharing'
+  } else {
+    window.location.href = 'https://docs.google.com/document/d/1y9GimJixtfUsLVKwCZJQzlEAZHC1AmnWKkukVpv_pE0/edit?tab=t.0'
+  }
+}
+
+// --------------------- Event Logging ---------------------
+
+// Event Logging Function
+function logEvent(type, element) {
+  fetch('/log-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventType: type, elementName: element, timestamp: new Date(), participantID: participantID })
+  });
+}
+
+// Click event listener
+sendBtn.addEventListener('click', () => {
+  logEvent('click', 'Send Button');
+});
+
+
+// Mouseover event listener
+inputField.addEventListener('mouseover', () => {
+  logEvent('hover', 'User Input');
+});
+
+// Keypress event listener
+inputField.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+      logEvent('enter', 'User Input');
+  }
+});
+
+// Focus event listener
+inputField.addEventListener('focus', () => {
+  logEvent('focus', 'User Input');
+});
+
+// Copy markdonw button event listener
+copyMarkdownBtn.addEventListener('click', () => {
+  logEvent('click', 'Copy Markdown Button');
+});
+
+// View markdown button event listener
+viewMarkdownBtn.addEventListener('click', () => {
+  logEvent('click', 'View Markdown Button');
+});
+
+// Editor tab event listener
+editorTab.addEventListener('click', () => {
+  logEvent('click', 'Editor Tab');
+});
+
+// Preview tab event listener
+previewTab.addEventListener('click', () => {
+  logEvent('click', 'Preview Tab');
+});
+
+// Download markdown button event listener
+downloadMarkdownBtn.addEventListener('click', () => {
+  logEvent('click', 'Download Markdown Button');
+});
+
+// Cmd + v event listener
+document.addEventListener('paste', (e) => {
+  logEvent('paste', 'Paste markdown');
+});

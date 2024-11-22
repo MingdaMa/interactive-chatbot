@@ -168,23 +168,20 @@ app.post('/project-info', async (req, res) => {
 app.post('/redirect-to-survey', (req, res) => {
   const { participantID, surveyCategory } = req.body;  // Getting participantID from request body
   
-  let qualtricsBaseUrl;
+  let url;
   // Base Qualtrics URL from Step 2
   if (surveyCategory === 'demographics') {
-    qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_3EqGE3EDAi4bGUm';
+    url = `https://usfca.qualtrics.com/jfe/form/SV_3EqGE3EDAi4bGUm?participantID=${encodeURIComponent(participantID)}`;
   } else if (surveyCategory === 'pre-task') {
     // TODO: Update the Qualtrics URL for the pre-task survey
-    qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_0W13FO2RouHpH0y';
+    url = `https://usfca.qualtrics.com/jfe/form/SV_0W13FO2RouHpH0y?participantID=${encodeURIComponent(participantID)}`;
   } else if (surveyCategory === 'post-task') {
      // TODO: Update the Qualtrics URL for the post-task survey
-    qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_dgV6HO2y5QdDd3M';
+    url = `https://usfca.qualtrics.com/jfe/form/SV_dgV6HO2y5QdDd3M?participantID=${encodeURIComponent(participantID)}`;
   }
   
-  // Add the participant ID as a URL parameter
-  const surveyUrl = `${qualtricsBaseUrl}?participantID=${encodeURIComponent(participantID)}`;
-  
   // Send the URL back to the client
-  res.send(surveyUrl);
+  res.send(url);
 });
 
 app.listen(PORT, () => {

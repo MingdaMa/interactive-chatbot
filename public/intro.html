@@ -31,13 +31,31 @@
 
             <!-- Step 2 -->
             <div class="relative bg-white rounded-lg shadow-md p-6">
+              <div class="absolute -left-3 top-1/2 transform -translate-y-1/2">
+                  <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
+                      2
+                  </div>
+              </div>
+              <div class="ml-8">
+                  <button id="task-description-btn" onclick="redirectToGoogleDoc()" class="text-blue-500 text-lg font-normal">
+                      Task
+                  </button>
+                  <p class="text-gray-600 mt-1">
+                      Read the task instructions and guidance on how to do the task in the Google Doc linked above.
+                  </p>
+              </div>
+          </div>
+
+
+            <!-- Step 2 -->
+            <div class="relative bg-white rounded-lg shadow-md p-6">
                 <div class="absolute -left-3 top-1/2 transform -translate-y-1/2">
                     <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
-                        2
+                        3
                     </div>
                 </div>
                 <div class="ml-8">
-                    <button id="pre-task-assessment-survey-btn" onclick="redirectToQualtrics('pre-task-assessment')" class="text-blue-500 text-lg font-normal">
+                    <button id="pre-task-assessment-survey-btn" onclick="redirectToQualtrics('pre-task')" class="text-blue-500 text-lg font-normal">
                         Pre-Task Assessment
                     </button>
                     <p class="text-gray-600 mt-1">
@@ -50,7 +68,7 @@
             <div class="relative bg-white rounded-lg shadow-md p-6">
                 <div class="absolute -left-3 top-1/2 transform -translate-y-1/2">
                     <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
-                        3
+                        4
                     </div>
                 </div>
                 <div class="ml-8">
@@ -67,11 +85,11 @@
             <div class="relative bg-white rounded-lg shadow-md p-6">
                 <div class="absolute -left-3 top-1/2 transform -translate-y-1/2">
                     <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-medium">
-                        4
+                        5
                     </div>
                 </div>
                 <div class="ml-8">
-                    <button id="post-task-questionnaire-survey-btn" onclick="redirectToQualtrics('post-task-questionnaire')" class="text-blue-500 text-lg font-normal">
+                    <button id="post-task-questionnaire-survey-btn" onclick="redirectToQualtrics('post-task')" class="text-blue-500 text-lg font-normal">
                         Post-Task Questionnaire
                     </button>
                     <p class="text-gray-600 mt-1">
