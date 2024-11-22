@@ -174,10 +174,10 @@ app.post('/redirect-to-survey', (req, res) => {
     qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_3EqGE3EDAi4bGUm';
   } else if (surveyCategory === 'pre-task') {
     // TODO: Update the Qualtrics URL for the pre-task survey
-    qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_3EqGE3EDAi4bGUm';
+    qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_0W13FO2RouHpH0y';
   } else if (surveyCategory === 'post-task') {
      // TODO: Update the Qualtrics URL for the post-task survey
-    qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_3EqGE3EDAi4bGUm';
+    qualtricsBaseUrl = 'https://usfca.qualtrics.com/jfe/form/SV_dgV6HO2y5QdDd3M';
   }
   
   // Add the participant ID as a URL parameter
