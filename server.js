@@ -135,27 +135,10 @@ function generatePrompt(projectInfo) {
 
 app.post('/project-info', async (req, res) => { 
   const { participantID, ...projectInfo } = req.body;
-  const { projectName, programmingLanguages, authorNames, githubHandles, githubRepo, description, configFile: { name, content } } = projectInfo;
-
-  if (!projectName || !programmingLanguages || !name || !content) {
-    return res.status(400).send('Project info is not complete!');
-  }
 
   const { userInput, systemPrompt } = generatePrompt(projectInfo);
 
   try {
-    const projectInfo = new ProjectInfo({
-      projectName,
-      programmingLanguages,
-      configFile: { name, content },
-      authorNames,
-      githubHandles,
-      githubRepo,
-      description
-    });
-
-    await projectInfo.save();
-
     const botResponse = await axios.post('http://localhost:3000/chat', { input: userInput, systemPrompt, participantID });
 
     res.json({ userInput, botResponse: botResponse.data.message });
