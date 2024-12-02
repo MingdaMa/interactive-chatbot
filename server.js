@@ -130,7 +130,7 @@ function generatePrompt(projectInfo) {
   const readmeGenerationPrompt = `Please specify what the project is about, how to set up the project, what the dependencies are based on the configuration file, and any other relevant information that should be included in the README file.
   Please format dependencies as a table and code snippets as code blocks. Author names and their github handles are stored in two different arrays in the same order. Please format the authors names as a list and link the names to their github profile page.`;
 
-  return { userInput, systemPrompt: `${systemPrompt} ${readmeGenerationPrompt}` };
+  return { userInput, systemPrompt: `${SYSTEM_PROMPT} ${readmeGenerationPrompt}` };
 }
 
 app.post('/project-info', async (req, res) => { 
